@@ -33,6 +33,17 @@ namespace HangMan
         }
         public string PickNew()
         {
+            StreamWriter output = new StreamWriter(@"Assets\plays.txt", true);
+            DateTime time = DateTime.Now;
+            if (time.Hour <= 12)
+            {
+                output.WriteLine(time.Hour + ":" + time.Minute + ":" + time.Second);
+            }
+            else if (time.Hour > 12)
+            {
+                output.WriteLine((time.Hour - 12) + ":" + time.Minute + ":" + time.Second + " PM");
+            }
+            output.Close();
             Random r = new Random();
             word = items[r.Next(0, items.Count - 1)];
             return word;
