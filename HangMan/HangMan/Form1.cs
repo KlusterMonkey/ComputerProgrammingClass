@@ -15,10 +15,12 @@ namespace HangMan
 {
     public partial class Window : Form
     {
-        int attemptsRemaining, textHeight, textWidth, textPadding, screenWidth, screenHeight;
+        int attemptsRemaining, textWidth, textPadding, screenWidth, screenHeight;
+        int onStart = 0; //0: On start screen, 1: Transitioning, 2: In game
         bool win = false;
         Word word = new Word();
         Image State;
+        Image background = Image.FromFile(@"Assets\Background.png");
         List<char> attemptedChars = new List<char>();
         int[] letterX, letterY;
         char[] buildingChars;
@@ -38,6 +40,11 @@ namespace HangMan
         {
             updateScreen();
             DialogResult quit = MessageBox.Show("Do you really want to quit?", "Quit?", MessageBoxButtons.YesNo, MessageBoxIcon.None);
+            if (quit == DialogResult.Yes)
+            {
+                onStart = 0;
+                reset();
+            }
         }
         private void quit(bool win)
         {
@@ -48,7 +55,10 @@ namespace HangMan
             else
             { quit = MessageBox.Show("You lose, do you want to ragequit?", "", MessageBoxButtons.YesNo, MessageBoxIcon.None); }
             if (quit == DialogResult.Yes)
-            { Application.Exit(); }
+            {
+                onStart = 0;
+                reset();
+            }
             else
             { reset(); }
         }
@@ -86,25 +96,38 @@ namespace HangMan
             else if (!win && attemptsRemaining <= 0)
             { quit(win); }
         }
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
+
+        private void DrawWindow_Click(object sender, EventArgs e)
         {
-            updateScreen();
-            if (e.KeyCode == Keys.Escape)
+            if (onStart == 0)
             {
-                quit();
-            }
-            else
-            {
-                checkLetters(e.KeyCode);
+                onStart = 1;
             }
         }
-        private void updateScreen()
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (onStart == 2)
+            {
+                updateScreen();
+                if (e.KeyCode == Keys.Escape)
+                {
+                    quit();
+                }
+                else
+                {
+                    checkLetters(e.KeyCode);
+                }
+            }
+        }
+        private void gameScreen()
         {
             StringFormat sf = new StringFormat();
             sf.LineAlignment = StringAlignment.Center;
             sf.Alignment = StringAlignment.Center;
             //Reset the canvas (mainly in case of moving images so its not super important here (I don't like the idea of having thousands of the same square drawn in the same space even though it makes no difference to the code or performance whatsoever)
             sCanvas.Clear(Color.DarkCyan);
+            sCanvas.DrawImage(background, 0, 0, 1280, 720);
             //Cheaty Cheaty
             sCanvas.DrawString("Totally not " + word.getWord(), new Font("Ariel", 10), Brushes.White, 10, 10);
             //Draw your failed attempts
@@ -137,6 +160,39 @@ namespace HangMan
                 sCanvas.DrawImage(State, screenWidth / 2 - 450, screenHeight / 2, 250, 250);
             }
             canvas.DrawImage(sPicture, 0, 0, screenWidth, screenHeight);
+        }
+        private void startScreen(int transparency)
+        {
+            sCanvas.Clear(Color.DarkCyan);
+            sCanvas.DrawImage(background, 0, 0, 1280, 720);
+            //Draw text
+            string text = "Click to start";
+            StringFormat sf = new StringFormat();
+            sf.LineAlignment = StringAlignment.Center;
+            sf.Alignment = StringAlignment.Center;
+            sCanvas.DrawString("Click to start", new Font("Ariel", 100), new SolidBrush(Color.FromArgb(transparency, Color.White)), screenWidth / 2, screenHeight / 2, sf);
+
+
+            canvas.DrawImage(sPicture, 0, 0, screenWidth, screenHeight);
+        }
+        private void updateScreen()
+        {
+            if (onStart == 0)
+            {
+                startScreen(255);
+            }
+            else if(onStart == 1)
+            {
+                for (int i = 51; i > 1; i -= 5)
+                {
+                    startScreen(i);
+                }
+                onStart = 2;
+            }
+            else
+            {
+                gameScreen();
+            }
         }
         private void reset()
         {

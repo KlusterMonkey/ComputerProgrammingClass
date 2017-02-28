@@ -42,6 +42,7 @@
             this.DrawWindow.Size = new System.Drawing.Size(1280, 720);
             this.DrawWindow.TabIndex = 0;
             this.DrawWindow.TabStop = false;
+            this.DrawWindow.Click += new System.EventHandler(this.DrawWindow_Click);
             // 
             // GameTick
             // 
@@ -51,14 +52,14 @@
             // 
             // Window
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(1281, 722);
+            this.ClientSize = new System.Drawing.Size(1281, 721);
             this.Controls.Add(this.DrawWindow);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.MaximumSize = new System.Drawing.Size(1299, 769);
-            this.MinimumSize = new System.Drawing.Size(1299, 769);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MaximumSize = new System.Drawing.Size(1297, 760);
+            this.MinimumSize = new System.Drawing.Size(1297, 760);
             this.Name = "Window";
             this.Text = "Hangman";
             this.Load += new System.EventHandler(this.start);
